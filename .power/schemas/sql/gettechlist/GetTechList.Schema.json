@@ -1,0 +1,30 @@
+{
+  "name": "[dbo].[GetTechList]",
+  "title": "[dbo].[GetTechList]",
+  "schema": {
+    "inputparameters": {
+      "type": "object",
+      "x-ms-visibility": "internal",
+      "default": {}
+    },
+    "procedureresultschema": {
+      "type": "object",
+      "properties": {
+        "returncode": {
+          "title": "ReturnCode",
+          "type": "integer"
+        },
+        "outputparameters": {
+          "title": "OutputParameters",
+          "type": "object"
+        },
+        "resultsets": {
+          "title": "ResultSets",
+          "type": "object"
+        }
+      }
+    },
+    "type": "object"
+  },
+  "x-ms-connection-version": "v2"
+}

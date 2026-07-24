@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "appId": null,
+  "appDisplayName": "Material Checkout",
+  "region": "prod",
+  "appType": "CodeApp",
+  "environmentId": "Default-2aab162a-8795-408d-a78c-935636f18951",
+  "description": "Submit division-specific warehouse material requests.",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {
+    "b68bef14-e810-4743-a22a-9196324e91e2": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_office365users",
+      "displayName": "Office 365 Users",
+      "dataSources": [
+        "office365users"
+      ],
+      "dataSets": {}
+    },
+    "27905a00-b977-4bc9-ab7d-3743d1656d03": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sql",
+      "displayName": "SQL Server",
+      "dataSources": [
+        "gettechlist",
+        "getmateriallist"
+      ],
+      "authenticationType": "windowsAuthentication",
+      "sharedConnectionId": "/providers/Microsoft.PowerApps/apis/shared_sql/connections/f83a71abe6c949eaa20886e6e938118d",
+      "dataSets": {
+        "prodb,onetrac": {
+          "dataSources": {
+            "gettechlist": {},
+            "getmateriallist": {}
+          }
+        }
+      }
+    }
+  },
+  "databaseReferences": {}
+}

@@ -1,0 +1,34 @@
+{
+  "name": "[dbo].[GetMaterialList]",
+  "title": "[dbo].[GetMaterialList]",
+  "schema": {
+    "inputparameters": {
+      "type": "object",
+      "properties": {
+        "DivisionCode": {
+          "title": "DivisionCode",
+          "type": "string"
+        }
+      }
+    },
+    "procedureresultschema": {
+      "type": "object",
+      "properties": {
+        "returncode": {
+          "title": "ReturnCode",
+          "type": "integer"
+        },
+        "outputparameters": {
+          "title": "OutputParameters",
+          "type": "object"
+        },
+        "resultsets": {
+          "title": "ResultSets",
+          "type": "object"
+        }
+      }
+    },
+    "type": "object"
+  },
+  "x-ms-connection-version": "v2"
+}
