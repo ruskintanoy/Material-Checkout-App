@@ -755,5 +755,19 @@ export const dataSourcesInfo = {
         }
       }
     }
+  },
+  "spaar_materialrequestlines": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "spaar_materialrequestlineid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
+  },
+  "spaar_materialrequests": {
+    "tableId": "",
+    "version": "",
+    "primaryKey": "spaar_materialrequestid",
+    "dataSourceType": "Dataverse",
+    "apis": {}
   }
 };

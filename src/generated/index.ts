@@ -4,11 +4,16 @@
  */
 
 // Models
+export * as CommonModels from './models/CommonModels';
 export * as GetMaterialListModel from './models/GetMaterialListModel';
 export * as GetTechListModel from './models/GetTechListModel';
 export * as Office365UsersModel from './models/Office365UsersModel';
+export * as Spaar_materialrequestlinesModel from './models/Spaar_materialrequestlinesModel';
+export * as Spaar_materialrequestsModel from './models/Spaar_materialrequestsModel';
 
 // Services
 export * from './services/GetMaterialListService';
 export * from './services/GetTechListService';
 export * from './services/Office365UsersService';
+export * from './services/Spaar_materialrequestlinesService';
+export * from './services/Spaar_materialrequestsService';
