@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "appId": null,
-  "appDisplayName": "Material Request",
+  "appId": "afc9f395-81a6-404f-8cf2-e7cb13fa72c4",
+  "appDisplayName": "Material Request v2 - Test",
   "region": "prod",
   "appType": "CodeApp",
   "environmentId": "Default-2aab162a-8795-408d-a78c-935636f18951",

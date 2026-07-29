@@ -3,12 +3,14 @@ import {
   Building2 as DivisionIcon,
   Check as CheckIcon,
   ChevronDown as ChevronIcon,
+  PackageOpen as EmptyMaterialsIcon,
   RefreshCw as RefreshIcon,
   Search as SearchIcon,
   ShoppingCart as CartIcon,
   Trash2 as TrashIcon,
   UserRound as UserIcon,
 } from 'lucide-react';
+import spaarLogo from './assets/spaar-logo.png?inline';
 import './App.css';
 import { Dialog } from './components/Dialog';
 import { errorMessage, findTechnicianEmail, loadMaterials, loadTechnicians, submitRequest } from './data';
@@ -25,8 +27,6 @@ import {
 
 type Confirmation = 'division' | 'clear' | 'reset' | null;
 
-const IDLE_WARNING_SECONDS = 270;
-const IDLE_RESET_SECONDS = 300;
 const MATERIALS_PER_PAGE = 8;
 const IS_DIRECT_LOCAL_PREVIEW = import.meta.env.DEV && window.self === window.top;
 const LOCAL_PLAY_MESSAGE = 'Live connectors are unavailable in the direct localhost preview. Open the Local Play URL printed by npm run dev.';
@@ -77,7 +77,7 @@ function RequestSummary({
 
       {!lines.length ? (
         <div className="empty-cart">
-          <div className="empty-cart__icon"><CartIcon size={28} /></div>
+          <div className="empty-cart__icon"><EmptyMaterialsIcon size={28} /></div>
           <h3>No materials selected</h3>
           <p>Added materials will appear here.</p>
         </div>
@@ -158,8 +158,6 @@ function App() {
   const [receipt, setReceipt] = useState<RequestReceipt | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [idleCountdown, setIdleCountdown] = useState<number | null>(null);
-  const lastActivity = useRef(0);
   const technicianPickerRef = useRef<HTMLDivElement>(null);
   const divisionPickerRef = useRef<HTMLDivElement>(null);
   const deferredSearch = useDeferredValue(search);
@@ -269,31 +267,6 @@ function App() {
     setReviewOpen(false);
     setSubmitError('');
   }
-
-  useEffect(() => {
-    lastActivity.current = Date.now();
-    const markActive = () => {
-      lastActivity.current = Date.now();
-      setIdleCountdown(null);
-    };
-    const events: (keyof WindowEventMap)[] = ['pointerdown', 'keydown', 'touchstart'];
-    events.forEach((eventName) => window.addEventListener(eventName, markActive, { passive: true }));
-    const timer = window.setInterval(() => {
-      const idleSeconds = Math.floor((Date.now() - lastActivity.current) / 1000);
-      if (idleSeconds >= IDLE_RESET_SECONDS) {
-        resetForm();
-        setReceipt(null);
-        setIdleCountdown(null);
-        lastActivity.current = Date.now();
-      } else if (idleSeconds >= IDLE_WARNING_SECONDS) {
-        setIdleCountdown(IDLE_RESET_SECONDS - idleSeconds);
-      }
-    }, 1000);
-    return () => {
-      window.clearInterval(timer);
-      events.forEach((eventName) => window.removeEventListener(eventName, markActive));
-    };
-  }, []);
 
   async function selectTechnician(stageid: number) {
     const selected = technicians.find((item) => item.stageid === stageid) || null;
@@ -450,7 +423,7 @@ function App() {
     <div className="app-shell">
       <header className="app-header">
         <div className="brand">
-          <img className="brand__logo" src="/spaar-logo.png" alt="Spaar" />
+          <img className="brand__logo" src={spaarLogo} alt="Spaar" />
           <span className="brand__divider" aria-hidden="true" />
           <div><span>Warehouse</span><strong>Material Request</strong></div> 
         </div>
@@ -516,7 +489,13 @@ function App() {
                     }}
                   >
                     <UserIcon />
-                    <span>{techniciansLoading ? 'Loading technicians…' : technician?.bponum || 'Select technician'}</span>
+                    <span>
+                      {techniciansLoading
+                        ? 'Loading technicians…'
+                        : technician
+                          ? `${technician.bponum} - ${technician.stage}`
+                          : 'Select technician'}
+                    </span>
                     <ChevronIcon />
                   </button>
                   {technicianPickerOpen && (
@@ -560,7 +539,7 @@ function App() {
                 {techniciansError && <p className="field-message field-message--error">{techniciansError}</p>}
                 {technician && emailState === 'loading' && <p className="field-message">Looking up technician email…</p>}
                 {technician && emailState === 'found' && <p className="field-message field-message--success">Email matched: {technicianEmail}</p>}
-                {technician && emailState === 'missing' && <p className="field-message field-message--warning">No unique email match found. You can still submit this request.</p>}
+                {technician && emailState === 'missing' && <p className="field-message field-message--warning">No email match found.</p>}
               </div>
 
               <fieldset className="field division-field">
@@ -635,7 +614,7 @@ function App() {
               <span className="step-number">2</span>
               <div><h2 id="materials-title">Materials</h2><p>{division ? `${division.label} inventory` : 'Select a division to load materials.'}</p></div>
               <button className="button button--outline clear-button" type="button" disabled={!lines.length} onClick={requestClear}>
-                <TrashIcon />Clear selected
+                <TrashIcon />Clear
               </button>
             </div>
 
@@ -678,11 +657,13 @@ function App() {
                     return (
                       <article className={`material-tile ${selected ? 'material-tile--selected' : ''}`} key={material.id}>
                         <div className="material-tile__top">
-                          <span className="product-code">{material.productCode || 'No product code'}</span>
+                          <div className="material-tags">
+                            <span className="product-code">{material.productCode || 'No product code'}</span>
+                            <span className="material-unit">{material.unit || 'Unit not listed'}</span>
+                          </div>
                           {selected && <span className="already-added"><CheckIcon />{selected.quantity} selected</span>}
                         </div>
                         <h3>{material.name}</h3>
-                        <p className="material-unit">Requested by {material.unit || 'unit'}</p>
                         <div className="material-tile__controls">
                           <span className="quantity-label">Quantity</span>
                           <div className="quantity-stepper">
@@ -818,12 +799,6 @@ function App() {
         )}
       </Dialog>
 
-      <Dialog
-        open={idleCountdown !== null}
-        title="Still working?"
-        description={`For privacy, this kiosk will clear the current screen in ${idleCountdown ?? 0} seconds.`}
-        actions={<button className="button button--primary button--wide" type="button" onClick={() => { lastActivity.current = Date.now(); setIdleCountdown(null); }}>Continue request</button>}
-      />
     </div>
   );
 }
