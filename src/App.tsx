@@ -1,15 +1,16 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Building2 as DivisionIcon,
+  Check as CheckIcon,
+  ChevronDown as ChevronIcon,
+  RefreshCw as RefreshIcon,
+  Search as SearchIcon,
+  ShoppingCart as CartIcon,
+  Trash2 as TrashIcon,
+  UserRound as UserIcon,
+} from 'lucide-react';
 import './App.css';
 import { Dialog } from './components/Dialog';
-import {
-  CartIcon,
-  CheckIcon,
-  ChevronIcon,
-  RefreshIcon,
-  SearchIcon,
-  TrashIcon,
-  UserIcon,
-} from './components/Icons';
 import { errorMessage, findTechnicianEmail, loadMaterials, loadTechnicians, submitRequest } from './data';
 import {
   DIVISIONS,
@@ -141,6 +142,8 @@ function App() {
   const [technicianEmail, setTechnicianEmail] = useState('');
   const [emailState, setEmailState] = useState<'idle' | 'loading' | 'found' | 'missing'>('idle');
   const [division, setDivision] = useState<Division | null>(null);
+  const [divisionPickerOpen, setDivisionPickerOpen] = useState(false);
+  const [divisionSearch, setDivisionSearch] = useState('');
   const [pendingDivision, setPendingDivision] = useState<Division | null>(null);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [materialsLoading, setMaterialsLoading] = useState(false);
@@ -158,6 +161,7 @@ function App() {
   const [idleCountdown, setIdleCountdown] = useState<number | null>(null);
   const lastActivity = useRef(0);
   const technicianPickerRef = useRef<HTMLDivElement>(null);
+  const divisionPickerRef = useRef<HTMLDivElement>(null);
   const deferredSearch = useDeferredValue(search);
 
   const isDirty = Boolean(technician || division || lines.length || notes.trim());
@@ -178,6 +182,12 @@ function App() {
       `${item.bponum} ${item.stage}`.toLocaleLowerCase().includes(term),
     );
   }, [technicianSearch, technicians]);
+
+  const filteredDivisions = useMemo(() => {
+    const term = divisionSearch.trim().toLocaleLowerCase();
+    if (!term) return DIVISIONS;
+    return DIVISIONS.filter((item) => item.label.toLocaleLowerCase().includes(term));
+  }, [divisionSearch]);
 
   const totalMaterialPages = Math.max(1, Math.ceil(filteredMaterials.length / MATERIALS_PER_PAGE));
   const materialPageStart = (materialPage - 1) * MATERIALS_PER_PAGE;
@@ -219,11 +229,24 @@ function App() {
     const closePicker = (event: PointerEvent) => {
       if (!technicianPickerRef.current?.contains(event.target as Node)) {
         setTechnicianPickerOpen(false);
+        setTechnicianSearch('');
       }
     };
     document.addEventListener('pointerdown', closePicker);
     return () => document.removeEventListener('pointerdown', closePicker);
   }, [technicianPickerOpen]);
+
+  useEffect(() => {
+    if (!divisionPickerOpen) return;
+    const closePicker = (event: PointerEvent) => {
+      if (!divisionPickerRef.current?.contains(event.target as Node)) {
+        setDivisionPickerOpen(false);
+        setDivisionSearch('');
+      }
+    };
+    document.addEventListener('pointerdown', closePicker);
+    return () => document.removeEventListener('pointerdown', closePicker);
+  }, [divisionPickerOpen]);
 
   function resetForm() {
     setTechnician(null);
@@ -232,6 +255,8 @@ function App() {
     setTechnicianEmail('');
     setEmailState('idle');
     setDivision(null);
+    setDivisionPickerOpen(false);
+    setDivisionSearch('');
     setPendingDivision(null);
     setMaterials([]);
     setMaterialsError('');
@@ -465,9 +490,16 @@ function App() {
             <div className="details-grid">
               <div className="field">
                 <div className="field__label-row">
-                  <label htmlFor="technician">Technician name <span>*</span></label>
-                  <button className="text-button" type="button" disabled={techniciansLoading || IS_DIRECT_LOCAL_PREVIEW} onClick={() => void refreshTechnicians()}>
-                    Refresh list
+                  <label htmlFor="technician">Technician name <span className="required-mark">*</span></label>
+                  <button
+                    className={`refresh-button ${techniciansLoading ? 'refresh-button--loading' : ''}`}
+                    type="button"
+                    aria-label="Refresh technician list"
+                    title="Refresh technician list"
+                    disabled={techniciansLoading || IS_DIRECT_LOCAL_PREVIEW}
+                    onClick={() => void refreshTechnicians()}
+                  >
+                    <RefreshIcon />
                   </button>
                 </div>
                 <div className="technician-picker" ref={technicianPickerRef}>
@@ -478,10 +510,13 @@ function App() {
                     aria-expanded={technicianPickerOpen}
                     aria-haspopup="listbox"
                     disabled={techniciansLoading || Boolean(techniciansError) || IS_DIRECT_LOCAL_PREVIEW}
-                    onClick={() => setTechnicianPickerOpen((open) => !open)}
+                    onClick={() => {
+                      setTechnicianSearch('');
+                      setTechnicianPickerOpen((open) => !open);
+                    }}
                   >
                     <UserIcon />
-                    <span>{techniciansLoading ? 'Loading technicians…' : technician?.bponum || 'Select your name'}</span>
+                    <span>{techniciansLoading ? 'Loading technicians…' : technician?.bponum || 'Select technician'}</span>
                     <ChevronIcon />
                   </button>
                   {technicianPickerOpen && (
@@ -492,8 +527,8 @@ function App() {
                           autoFocus
                           type="search"
                           value={technicianSearch}
-                          placeholder="Search technician names"
-                          aria-label="Search technician names"
+                          placeholder="Search technician name or unit"
+                          aria-label="Search technician name or unit"
                           onChange={(event) => setTechnicianSearch(event.target.value)}
                           onKeyDown={(event) => {
                             if (event.key === 'Escape') setTechnicianPickerOpen(false);
@@ -529,21 +564,67 @@ function App() {
               </div>
 
               <fieldset className="field division-field">
-                <legend>Division <span>*</span></legend>
-                <div className="division-options">
-                  {DIVISIONS.map((item) => (
-                    <button
-                      className={`division-button ${division?.sqlCode === item.sqlCode ? 'division-button--selected' : ''}`}
-                      type="button"
-                      key={item.sqlCode}
-                      aria-pressed={division?.sqlCode === item.sqlCode}
-                      onClick={() => chooseDivision(item)}
-                    >
-                      <span>{item.label === 'Residential' ? '⌂' : '◫'}</span>
-                      <strong>{item.label}</strong>
-                      {division?.sqlCode === item.sqlCode && <CheckIcon />}
-                    </button>
-                  ))}
+                <legend>Division <span className="required-mark">*</span></legend>
+                <div className="division-picker" ref={divisionPickerRef}>
+                  <button
+                    id="division-picker"
+                    className="select-wrap division-picker__trigger"
+                    type="button"
+                    aria-expanded={divisionPickerOpen}
+                    aria-haspopup="listbox"
+                    disabled={materialsLoading}
+                    onClick={() => {
+                      setDivisionSearch('');
+                      setDivisionPickerOpen((open) => !open);
+                    }}
+                  >
+                    <DivisionIcon />
+                    <span>{division?.label || 'Select division'}</span>
+                    <ChevronIcon />
+                  </button>
+                  {divisionPickerOpen && (
+                    <div className="division-picker__menu">
+                      <div className="technician-picker__search">
+                        <SearchIcon />
+                        <input
+                          autoFocus
+                          type="search"
+                          value={divisionSearch}
+                          placeholder="Search divisions"
+                          aria-label="Search divisions"
+                          onChange={(event) => setDivisionSearch(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Escape') {
+                              setDivisionPickerOpen(false);
+                              setDivisionSearch('');
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="technician-picker__options" role="listbox" aria-label="Divisions">
+                        {filteredDivisions.map((item) => (
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={division?.sqlCode === item.sqlCode}
+                            className={division?.sqlCode === item.sqlCode ? 'is-selected' : ''}
+                            key={item.sqlCode}
+                            onClick={() => {
+                              setDivisionPickerOpen(false);
+                              setDivisionSearch('');
+                              chooseDivision(item);
+                            }}
+                          >
+                            <span className="technician-picker__option-label">
+                              <strong>{item.label}</strong>
+                            </span>
+                            {division?.sqlCode === item.sqlCode && <CheckIcon />}
+                          </button>
+                        ))}
+                        {!filteredDivisions.length && <p>No divisions match that search.</p>}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </fieldset>
             </div>

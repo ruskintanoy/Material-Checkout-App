@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
+import { Check } from 'lucide-react';
 
 interface DialogProps {
   open: boolean;
@@ -43,7 +44,7 @@ export function Dialog({
       <div className="dialog__surface">
         {tone === 'success' && (
           <div className="success-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="m6.8 12.4 3.1 3.1 7.3-7.3" /></svg>
+            <Check />
           </div>
         )}
         <h2>{title}</h2>
