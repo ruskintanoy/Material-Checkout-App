@@ -1,68 +1,100 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  font-family: "Segoe UI", SegoeUI, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #2e2925;
+  background: #f4f2ef;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --green-950: #2e2925;
+  --green-900: #3f3a36;
+  --green-800: #7f8f20;
+  --green-700: #7f8f20;
+  --green-100: #f1f4e3;
+  --green-50: #fafbf5;
+  --ink: #2e2925;
+  --muted: #726a63;
+  --line: #e2ddd7;
+  --surface: #ffffff;
+  --canvas: #f4f2ef;
+  --orange: #9aac28;
+  --orange-dark: #7f8f20;
+  --lime: #9aac28;
+  --brown: #6e6862;
+  --action-ink: #283000;
+  --red: #bd302f;
+  --shadow: 0 10px 30px rgba(83, 57, 34, 0.08);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+* {
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--canvas);
 }
 
 body {
+  font-family: "Segoe UI", SegoeUI, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+button,
+input,
+select,
+textarea {
+  font-family: "Segoe UI", SegoeUI, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: inherit;
+}
+
+button,
+select {
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  touch-action: manipulation;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(154, 172, 40, 0.3);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3,
+strong {
+  font-weight: 600;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

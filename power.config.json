@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "appId": null,
-  "appDisplayName": "Material Checkout",
+  "appDisplayName": "Material Request",
   "region": "prod",
   "appType": "CodeApp",
   "environmentId": "Default-2aab162a-8795-408d-a78c-935636f18951",
