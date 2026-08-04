@@ -24,12 +24,13 @@ import {
   type RequestReceipt,
   type Technician,
 } from './domain';
+import { matchesMaterialSearch } from './materialSearch';
 
 type Confirmation = 'division' | 'clear' | 'reset' | null;
 
 const MATERIALS_PER_PAGE = 8;
 const IS_DIRECT_LOCAL_PREVIEW = import.meta.env.DEV && window.self === window.top;
-const LOCAL_PLAY_MESSAGE = 'Live connectors are unavailable in the direct localhost preview. Open the Local Play URL printed by npm run dev.';
+const LOCAL_PLAY_MESSAGE = 'Live connectors are unavailable in the localhost preview. Open the Local Play URL instead.';
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-CA', {
@@ -166,11 +167,7 @@ function App() {
   const canSubmit = Boolean(technician && division && lines.length && !materialsLoading);
 
   const filteredMaterials = useMemo(() => {
-    const term = deferredSearch.trim().toLocaleLowerCase();
-    if (!term) return materials;
-    return materials.filter((material) =>
-      `${material.name} ${material.productCode}`.toLocaleLowerCase().includes(term),
-    );
+    return materials.filter((material) => matchesMaterialSearch(material, deferredSearch));
   }, [deferredSearch, materials]);
 
   const filteredTechnicians = useMemo(() => {
