@@ -677,7 +677,7 @@ function App() {
                             <button type="button" aria-label={`Increase ${material.name}`} onClick={() => setDraftQuantity(material.id, quantityFor(material.id) + 1)}>+</button>
                           </div>
                           <button className="button button--add" type="button" onClick={() => addMaterial(material)}>
-                            {selected ? 'Add more' : 'Add to request'}
+                            {selected ? 'Add more' : 'Add'}
                           </button>
                         </div>
                       </article>
