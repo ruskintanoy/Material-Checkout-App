@@ -11,15 +11,16 @@
   "localAppUrl": "http://localhost:3000",
   "logoPath": "Default",
   "connectionReferences": {
-    "b68bef14-e810-4743-a22a-9196324e91e2": {
+    "b93e0cf3-585f-4b10-9623-28f3f5169662": {
       "id": "/providers/Microsoft.PowerApps/apis/shared_office365users",
       "displayName": "Office 365 Users",
       "dataSources": [
         "office365users"
       ],
-      "dataSets": {}
+      "dataSets": {},
+      "xrmConnectionReferenceLogicalName": "spaar_Office365Users_MaterialRequest"
     },
-    "27905a00-b977-4bc9-ab7d-3743d1656d03": {
+    "bf3d3d89-37d4-4808-886a-c7d61438711d": {
       "id": "/providers/Microsoft.PowerApps/apis/shared_sql",
       "displayName": "SQL Server",
       "dataSources": [
@@ -35,7 +36,8 @@
             "getmateriallist": {}
           }
         }
-      }
+      },
+      "xrmConnectionReferenceLogicalName": "new_sharedsql_24a5a8118d"
     }
   },
   "databaseReferences": {
